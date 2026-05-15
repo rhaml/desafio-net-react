@@ -15,7 +15,7 @@ namespace DesafioApi.Services
 
         private readonly IMapper _mapper;
 
-        public StudentService(StudentRepository repo, IMapper mapper)
+        public StudentService(IStudentRepository repo, IMapper mapper)
         {
             _repo = repo;
             _mapper = mapper;

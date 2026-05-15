@@ -19,16 +19,27 @@ public partial class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll",
+                policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+        });
+
         builder.Services.AddControllers();
 
         builder.Services.AddDbContext<AppDbContext>(opt =>
             opt.UseInMemoryDatabase("StudentDb"));
 
+        builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+
         builder.Services.AddScoped<IStudentService, StudentService>();
 
         builder.Services.AddScoped<ITokenService, TokenService>();
-
-        builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
         builder.Services.AddAutoMapper(typeof(MapperProfile));
         
@@ -82,10 +93,10 @@ public partial class Program
             }); // Habilita a interface gráfica
         }
 
+        app.UseRouting();
+        app.UseCors("AllowAll");
         app.UseAuthentication(); // Must come before UseAuthorization
         app.UseAuthorization();
-
-        app.UseHttpsRedirection();
 
         app.MapControllers();
 
