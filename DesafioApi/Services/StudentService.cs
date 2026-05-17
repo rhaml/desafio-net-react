@@ -5,7 +5,9 @@ using DesafioApi.Models;
 using DesafioApi.Repository;
 using DesafioApi.Repository.Interfaces;
 using DesafioApi.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DesafioApi.Services
 {
@@ -21,7 +23,7 @@ namespace DesafioApi.Services
             _mapper = mapper;
         }
 
-        public StudentDTO Create(StudentInsertDTO dto)
+        public StudentDTO Create(StudentDTO dto)
         {
             var student = _mapper.Map<Student>(dto);
             _repo.Add(student);
@@ -38,9 +40,10 @@ namespace DesafioApi.Services
             return true;
         }
 
-        public List<StudentDTO> GetAll()
+        public Tuple<List<StudentDTO>, int> GetAll(string nome, int page, int pageSize)
         {
-            return _mapper.Map<List<StudentDTO>>(_repo.GetAll());
+            var response = _repo.GetAll( nome, page, pageSize);
+            return new Tuple<List<StudentDTO>, int>(_mapper.Map<List<StudentDTO>>(response.Item1), response.Item2);
         }
 
         public StudentDTO GetById(int id)
@@ -50,7 +53,7 @@ namespace DesafioApi.Services
             return _mapper.Map<StudentDTO>(s);
         }
 
-        public bool Update(int id, StudentInsertDTO dto)
+        public bool Update(int id, StudentDTO dto)
         {
             var student = _repo.GetById(id);
             if (student == null) return false;

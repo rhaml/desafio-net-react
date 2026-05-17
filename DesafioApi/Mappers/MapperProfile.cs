@@ -10,7 +10,7 @@
         public MapperProfile()
         {
             CreateMap<Student, StudentDTO>();
-            CreateMap<StudentInsertDTO, Student>();
+            CreateMap<StudentDTO, Student>();
         }
     }
 }

@@ -2,6 +2,7 @@
 using DesafioApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 [Authorize]
 [ApiController]
@@ -16,10 +17,16 @@ public class StudentsController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetAll()
+    public IActionResult GetAll(
+    string? nome,
+    int? serie,
+    int page = 1,
+    int pageSize = 5)
     {
-        var student = _service.GetAll();
-        return Ok(student);
+        var response = _service.GetAll(nome, page, pageSize);
+        var data = response.Item1;
+        var total = response.Item2;
+        return Ok(new { data, total });
     }
 
     [HttpGet("{id}")]
@@ -31,11 +38,11 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Create(StudentInsertDTO dto)
+    public IActionResult Create(StudentDTO dto)
         => Ok(_service.Create(dto));
 
     [HttpPut("{id}")]
-    public IActionResult Update(int id, StudentInsertDTO dto)
+    public IActionResult Update(int id, StudentDTO dto)
     {
         if (!_service.Update(id, dto))
             return NotFound();

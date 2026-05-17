@@ -4,10 +4,10 @@ namespace DesafioApi.Services.Interfaces
 {
     public interface IStudentService
     {
-        List<StudentDTO> GetAll();
+        Tuple<List<StudentDTO>, int> GetAll(string nome, int page, int pageSize);
         StudentDTO GetById(int id);
-        StudentDTO Create(StudentInsertDTO dto);
-        bool Update(int id, StudentInsertDTO dto);
+        StudentDTO Create(StudentDTO dto);
+        bool Update(int id, StudentDTO dto);
         bool Delete(int id);
     }
 }

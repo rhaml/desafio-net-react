@@ -1,15 +1,18 @@
 using DesafioApi.Configurations;
 using DesafioApi.Context;
 using DesafioApi.Mappers;
+using DesafioApi.Models;
 using DesafioApi.Repository;
 using DesafioApi.Repository.Interfaces;
 using DesafioApi.Services;
 using DesafioApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using SecureIdentity.Password;
 using System.Reflection.Metadata;
 using System.Text;
 
@@ -42,7 +45,7 @@ public partial class Program
         builder.Services.AddScoped<ITokenService, TokenService>();
 
         builder.Services.AddAutoMapper(typeof(MapperProfile));
-        
+
         builder.Services.AddEndpointsApiExplorer();
 
         builder.Services.AddSwaggerGen(options =>
@@ -100,6 +103,28 @@ public partial class Program
 
         app.MapControllers();
 
+        app.MapGet("/", () => Results.Redirect("/swagger"));
+
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider
+                .GetRequiredService<AppDbContext>();
+
+            // Verifica se já existe usuário
+            if (!context.Users.Any())
+            {
+                context.Users.Add(new User
+                {
+                    Username = "admin",
+                    Password = "10000.doWNIQ7LcupS4iuoElv2pg==.qjWuEnwIaNt6l1FGVbhA2ofQVcx0SxaNJukNjFsqbVc="
+                });
+
+                context.SaveChanges();
+            }
+
+
+        }
         app.Run();
     }
 }
