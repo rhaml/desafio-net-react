@@ -1,5 +1,6 @@
 using DesafioApi.Configurations;
 using DesafioApi.Context;
+using DesafioApi.Data;
 using DesafioApi.Mappers;
 using DesafioApi.Models;
 using DesafioApi.Repository;
@@ -86,19 +87,18 @@ public partial class Program
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger(); // Habilita o JSON endpoint
+            app.UseSwagger(); 
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Minha API V1");
-            }); // Habilita a interface gráfica
+            });
         }
 
         app.UseRouting();
         app.UseCors("AllowAll");
-        app.UseAuthentication(); // Must come before UseAuthorization
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();
@@ -111,7 +111,6 @@ public partial class Program
             var context = scope.ServiceProvider
                 .GetRequiredService<AppDbContext>();
 
-            // Verifica se já existe usuário
             if (!context.Users.Any())
             {
                 context.Users.Add(new User
@@ -122,9 +121,16 @@ public partial class Program
 
                 context.SaveChanges();
             }
-
-
         }
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider
+                .GetRequiredService<AppDbContext>();
+
+            DbSeeder.Seed(context);
+        }
+
         app.Run();
     }
 }

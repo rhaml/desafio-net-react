@@ -35,16 +35,4 @@ public class AuthController : ControllerBase
 
         return Ok(new { token });
     }
-
-    [HttpPost("AddUser")]
-    public IActionResult User(LoginDTO dto)
-    {
-        var user = new DesafioApi.Models.User { Username = dto.Username, Password = dto.Password };
-        _context.Users
-            .Add(user);
-        _context.SaveChanges();
-
-       
-        return Ok(user);
-    }
 }

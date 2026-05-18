@@ -19,7 +19,6 @@ public class StudentsController : ControllerBase
     [HttpGet]
     public IActionResult GetAll(
     string? nome,
-    int? serie,
     int page = 1,
     int pageSize = 5)
     {
